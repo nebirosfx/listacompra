@@ -12,43 +12,43 @@
     body {
       background: #fffef9;
       font-family: 'Share Tech Mono', 'Courier New', monospace;
-      font-size: 13px;
+      font-size: 26px;
       color: #1a1a1a;
     }
 
     .ticket {
-      padding: 1rem 1.2rem;
+      padding: 2rem 2.4rem;
       width: 100%;
     }
 
     .header {
       text-align: center;
-      margin-bottom: 1.2rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px dashed #ccc;
+      margin-bottom: 2.4rem;
+      padding-bottom: 2rem;
+      border-bottom: 2px dashed #ccc;
     }
 
     .header-logo {
-      font-size: 22px;
-      letter-spacing: 4px;
+      font-size: 44px;
+      letter-spacing: 8px;
       font-weight: bold;
       text-transform: uppercase;
     }
 
     .header-sub {
-      font-size: 10px;
-      letter-spacing: 2px;
+      font-size: 20px;
+      letter-spacing: 4px;
       color: #888;
-      margin-top: 4px;
+      margin-top: 8px;
       text-transform: uppercase;
     }
 
     .meta {
-      font-size: 10px;
+      font-size: 20px;
       color: #999;
       text-align: center;
-      margin-bottom: 1.4rem;
-      letter-spacing: 1px;
+      margin-bottom: 2.8rem;
+      letter-spacing: 2px;
       text-transform: uppercase;
     }
 
@@ -58,37 +58,37 @@
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      margin-bottom: 6px;
+      margin-bottom: 12px;
     }
 
     .store-name {
-      font-size: 11px;
-      letter-spacing: 2px;
+      font-size: 22px;
+      letter-spacing: 4px;
       text-transform: uppercase;
       color: #555;
     }
 
-    .store-total { font-size: 10px; color: #aaa; }
+    .store-total { font-size: 20px; color: #aaa; }
 
     .store-divider {
-      border-top: 1px dashed #ccc;
-      margin: 1.2rem 0;
+      border-top: 2px dashed #ccc;
+      margin: 2.4rem 0;
     }
 
     table { width: 100%; border-collapse: collapse; }
 
     .th {
-      font-size: 9px;
+      font-size: 18px;
       color: #bbb;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
       text-transform: uppercase;
-      padding-bottom: 5px;
-      border-bottom: 1px solid #e8e4dc;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e8e4dc;
       font-weight: normal;
     }
 
-    tr + tr td { border-top: 1px dotted #ece8e0; }
-    td { padding: 7px 0; vertical-align: middle; }
+    tr + tr td { border-top: 2px dotted #ece8e0; }
+    td { padding: 14px 0; vertical-align: middle; }
 
     .col-qty   { width: 14%; color: #777; text-align: left; }
     .col-name  { width: 62%; }
@@ -99,36 +99,36 @@
     th.col-price { text-align: right; }
 
     .total-block {
-      margin-top: 1.4rem;
-      padding-top: 1rem;
-      border-top: 1px dashed #ccc;
+      margin-top: 2.8rem;
+      padding-top: 2rem;
+      border-top: 2px dashed #ccc;
       display: flex;
       justify-content: space-between;
       align-items: baseline;
     }
 
     .total-label {
-      font-size: 10px;
-      letter-spacing: 2px;
+      font-size: 20px;
+      letter-spacing: 4px;
       text-transform: uppercase;
       color: #888;
     }
 
     .total-amount {
-      font-size: 18px;
+      font-size: 36px;
       font-weight: bold;
     }
 
     .footer {
       text-align: center;
-      font-size: 10px;
+      font-size: 20px;
       color: #bbb;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
       line-height: 2;
       text-transform: uppercase;
-      margin-top: 1.2rem;
-      padding-top: 1rem;
-      border-top: 1px dashed #ccc;
+      margin-top: 2.4rem;
+      padding-top: 2rem;
+      border-top: 2px dashed #ccc;
     }
   </style>
 </head>
@@ -148,24 +148,26 @@
 </div>
 
 <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyq_FYb1akexLLi_aG8vbzF63x7WKDFeiXxZpqOWchjQTi5-g6ECPBfRd71jLTCUtbK/exec';
+  const SCRIPT_URL = 'TU_URL_APPS_SCRIPT';
 
   const now = new Date();
   document.getElementById('fecha').textContent = now.toLocaleDateString('es-ES', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   }).toUpperCase();
 
-  function cargar() {
-    fetch(SCRIPT_URL, { redirect: 'follow' })
-      .then(r => {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      })
-      .then(renderizar)
-      .catch(err => {
-        document.getElementById('contenido').innerHTML =
-          '<p style="color:red;padding:1rem;">Error: ' + err.message + '</p>';
-      });
+  function cargarJSONP(url) {
+    return new Promise((resolve, reject) => {
+      const nombre = 'jsonp_' + Date.now();
+      const script = document.createElement('script');
+      window[nombre] = data => {
+        delete window[nombre];
+        document.body.removeChild(script);
+        resolve(data);
+      };
+      script.onerror = () => reject(new Error('Error cargando datos'));
+      script.src = url + '?callback=' + nombre;
+      document.body.appendChild(script);
+    });
   }
 
   function renderizar(items) {
@@ -227,7 +229,12 @@
       '<br>¡Buena compra!';
   }
 
-  cargar();
+  cargarJSONP(SCRIPT_URL)
+    .then(renderizar)
+    .catch(err => {
+      document.getElementById('contenido').innerHTML =
+        '<p style="color:red;padding:1rem;">Error: ' + err.message + '</p>';
+    });
 </script>
 </body>
 </html>
