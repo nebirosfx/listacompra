@@ -23,9 +23,9 @@
 
     .header {
       text-align: center;
-      margin-bottom: 2.4rem;
-      padding-bottom: 2rem;
-      border-bottom: 2px dashed #ccc;
+      margin-bottom: 1rem;
+      padding-bottom: 0rem;
+
     }
 
     .header-logo {
@@ -50,6 +50,8 @@
       margin-bottom: 2.8rem;
       letter-spacing: 2px;
       text-transform: uppercase;
+      padding-bottom: 2rem
+      border-bottom: 2px dashed #ccc;
     }
 
     .store-block { margin: 0; }
@@ -134,10 +136,9 @@
 <body>
 <div class="ticket" id="ticket">
   <div class="header">
-    <div class="header-logo">🛒 Compra Lope</div>
-    <div class="header-sub">lista semanal</div>
+    <div class="header-logo">🛒 Compra 🛒</div>
   </div>
-  <div class="meta" id="fecha"></div>
+    <div class="meta" id="fecha"></div>
   <div id="contenido"></div>
   <div class="total-block">
     <span class="total-label">Total estimado</span>
@@ -157,7 +158,7 @@
   function renderizar(items) {
     const groups = {};
     items.forEach(item => {
-      const store = item.store || 'Sin supermercado';
+      const store = item.store || 'OTROS';
       if (!groups[store]) groups[store] = [];
       groups[store].push(item);
     });
@@ -206,11 +207,7 @@
 
     document.getElementById('contenido').innerHTML = blocks;
     document.getElementById('total').textContent = totalGlobal.toFixed(2) + '€';
-    document.getElementById('footer').innerHTML =
-      items.length + ' producto' + (items.length !== 1 ? 's' : '') +
-      ' · ' + Object.keys(groups).length + ' supermercado' +
-      (Object.keys(groups).length !== 1 ? 's' : '') +
-      '<br>¡Buena compra!';
+    document.getElementById('footer').innerHTML = '<br>Sergio y Elena';
   }
 
   function cargar() {
