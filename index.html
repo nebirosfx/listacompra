@@ -155,20 +155,17 @@
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   }).toUpperCase();
 
-  function cargarJSONP(url) {
-    return new Promise((resolve, reject) => {
-      const nombre = 'jsonp_' + Date.now();
-      const script = document.createElement('script');
-      window[nombre] = data => {
-        delete window[nombre];
-        document.body.removeChild(script);
-        resolve(data);
-      };
-      script.onerror = () => reject(new Error('Error cargando datos'));
-      script.src = url + '?callback=' + nombre;
-      document.body.appendChild(script);
-    });
-  }
+  function cargar() {
+    fetch(SCRIPT_URL, { redirect: 'follow' })
+      .then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(renderizar)
+      .catch(err => {
+        document.getElementById('contenido').innerHTML =
+          '<p style="color:red;padding:1rem;">Error: ' + err.message + '</p>';
+      });
 
   function renderizar(items) {
     const groups = {};
@@ -228,13 +225,9 @@
       (Object.keys(groups).length !== 1 ? 's' : '') +
       '<br>¡Buena compra!';
   }
-
-  cargarJSONP(SCRIPT_URL)
-    .then(renderizar)
-    .catch(err => {
-      document.getElementById('contenido').innerHTML =
-        '<p style="color:red;padding:1rem;">Error: ' + err.message + '</p>';
-    });
+    
+  cargar();
+    
 </script>
 </body>
 </html>
